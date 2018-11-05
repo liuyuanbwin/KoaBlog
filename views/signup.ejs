@@ -1,11 +1,4 @@
 <%- include("header",{type:'signup'}) %>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-        <meta charset="UTF-8">
-        <title>注册</title>
-</head>
-<body>
     <div class="container">
         <form action="form create" method="POST">
             <div>
@@ -30,5 +23,11 @@
 
         </form>
     </div>
-</body>
-</html>
+    <script>
+        $(window).keyup(function (e){
+            if(e.keyCode == 13){
+                $('.submit').click()
+            }
+        })
+        
+    </script>
