@@ -41,6 +41,8 @@ app.use(bodyParser({
 
 app.use(require('./routers/signup.js').routes())
 app.use(require('./routers/signin.js').routes())
+app.use(require('./routers/posts.js').routes())
+app.use(require('./routers/signout.js').routes())
 
 app.listen(config.port)
 

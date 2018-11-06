@@ -40,8 +40,8 @@
                             },1500)                 
                         }
                     },
-                    error: function () {
-                        alert('异常');
+                    error: function (err) {
+                        alert('异常' + JSON.stringify(err));
                     }
                 })          
             }

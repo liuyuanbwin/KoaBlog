@@ -46,3 +46,73 @@ router.get('/posts', async(ctx, next) =>{
         })
     }
 })
+
+//首页分页,每次输出10条
+router.post('/posts/page', async(ctx, next) => {
+    let page = ctx.request.body.page;
+    await userModel.findPostByPage(page)
+            .then(result=>{
+                ctx.body = result
+            }).catch(()=>{
+                ctx.body = 'error'
+            })
+})
+
+//个人文章分页,每次输出10条
+router.post('/post/self/page', async(ctx, next) => {
+    let data = ctx.request.body
+    await userModel.findPostByUserPage(data.name,data.page)
+            .then(result=>{
+                ctx.body = result
+            }).catch(()=>{
+                ctx.body = 'error'
+            })
+})
+
+//发表文章页面
+router.get('/create', async(ctx, next) => {
+    await ctx.render('create', {
+        session:ctx.session,
+    })
+})
+
+//post 发表文章
+router.post('/create', async(ctx, next) => {
+    let title = ctx.request.body.title,
+        content = ctx.request.body.content,
+        id = ctx.session.id,
+        name = ctx.session.user,
+        time = moment().format('YYYY-MM-DD HH:mm:ss'),
+        avator,
+        //仙子使用markdown 不需要单独转义
+        newContent = content.replace(/[<">']/g, (target) => {
+            return {
+                '<':'&lt;',
+                '"':'&quot;',
+                '>':'&gt;',
+                "'":'&#39;'
+            }[target]
+        }),
+        newTitle = title.replace(/[<">']/g,(target) => {
+            return {
+                '<':'&lt;',
+                '"':'&quot;',
+                '>':'&gt;',
+                "'":'&#39;'
+            }[target]
+        });
+
+        await userModel.findUserData(ctx.session.user)
+            .then(res => {
+                console.log(res[0]['avator'])
+                avator = res[0]['avator']
+            })
+        await userModel.insertPost([name, newTitle, md.render(content),content,id,time,avator]
+            .then(() => {
+                ctx.body = true
+            }).catch(() => {
+                ctx.body = false
+            }))
+})
+
+module.exports = router
